@@ -1,0 +1,402 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{siunitx}
+\usepackage{multirow}
+\usepackage{titlesec}
+\usepackage{listings}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue,
+    pdftitle={Air Pollution Prediction and Analysis Framework},
+    pdfauthor={Ankit et al.}
+}
+
+\titleformat{\section}{\large\bfseries}{\thesection}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.5em}{}
+
+\lstdefinestyle{papercode}{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    columns=fullflexible,
+    showstringspaces=false,
+    keepspaces=true
+}
+
+\title{\textbf{A Machine Learning and Explainable AI Driven Framework for\newline
+Global Air Quality Prediction, Forecasting, and Interactive Decision Support}}
+\author{Ankit \and Collaborators}
+\date{March 30, 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Air pollution remains one of the most serious environmental and public health challenges worldwide. This work presents an end-to-end framework that combines machine learning (ML), explainable artificial intelligence (XAI), short-term forecasting, and interactive visualization for global air quality analysis. The system integrates Random Forest and XGBoost models for AQI regression and classification, confidence estimation based on model agreement, SHAP/LIME style interpretability, and time-series forecasting using Prophet with robust fallback strategies. A FastAPI backend and React-based globe interface provide real-time country-level exploration, trend analysis, what-if simulation, and user-centric health impact communication. The resulting platform supports both technical and non-technical stakeholders in understanding pollution dynamics and exploring intervention scenarios.
+\end{abstract}
+
+\textbf{Keywords:} Air Quality Index, Machine Learning, Explainable AI, SHAP, XGBoost, Random Forest, Forecasting, Decision Support, FastAPI, React
+
+\section{Introduction}
+Air quality degradation directly affects morbidity, mortality, and quality of life, especially in dense urban and industrial regions. Traditional reporting systems often focus on static snapshots and limited interpretability, making it difficult for decision makers and the public to understand drivers of pollution or evaluate interventions.
+
+Recent advances in ML enable more accurate AQI prediction from pollutant and meteorological signals, while XAI methods can expose feature-level contributions and improve trust in model outputs. However, many practical deployments still lack cohesive architecture that combines prediction, explanation, forecasting, and intuitive interaction.
+
+This paper presents a full-stack framework that addresses these gaps by integrating:
+\begin{itemize}[leftmargin=*]
+    \item Ensemble ML prediction (Random Forest + XGBoost),
+    \item Model interpretability pathways,
+    \item 14-day forecasting with data-sparse robustness,
+    \item Interactive global visualization and scenario simulation,
+    \item Health-aware communication for end users.
+\end{itemize}
+
+\section{Objectives}
+The primary objectives of this work are:
+\begin{enumerate}[leftmargin=*]
+    \item Develop an accurate AQI prediction engine using supervised ML.
+    \item Improve transparency through explanation-oriented outputs.
+    \item Provide short-horizon AQI forecasting for proactive planning.
+    \item Build an interactive, globe-centric interface for exploration.
+    \item Enable sensitivity analysis via user-driven pollutant simulation.
+\end{enumerate}
+
+\section{Methodology}
+\subsection{System Architecture}
+The system follows a modular architecture with ML inference and APIs in the backend and interactive analytics in the frontend.
+
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Backend}: FastAPI services for prediction, realtime, history, forecast, websocket updates, and simulation.
+    \item \textbf{Data Layer}: Historical global air pollution records with country and temporal indexing.
+    \item \textbf{Model Layer}: Scaler, Random Forest, and XGBoost artifacts loaded for low-latency inference.
+    \item \textbf{Frontend}: React + Vite + globe.gl interface with floating insight cards and expanded analytical modals.
+\end{itemize}
+
+\subsection{Data Processing and Feature Engineering}
+Input features include major pollutants and related environmental indicators. Data preprocessing involves missing value handling, scaling, and engineered feature vectors aligned with trained model expectations.
+
+Let the feature vector for a sample be:
+\begin{equation}
+\mathbf{x} = [x_1, x_2, \dots, x_n]^T
+\end{equation}
+where components represent pollutant concentrations and auxiliary factors.
+
+A standard scaler transforms each feature as:
+\begin{equation}
+z_i = \frac{x_i - \mu_i}{\sigma_i}
+\end{equation}
+with training mean $\mu_i$ and standard deviation $\sigma_i$.
+
+\subsection{ML Prediction Pipeline}
+Two regressors are used and combined for robust predictions:
+\begin{equation}
+\hat{y}_{\text{ensemble}} = \frac{1}{2}\left(\hat{y}_{\text{RF}} + \hat{y}_{\text{XGB}}\right)
+\end{equation}
+
+AQI class labels are generated through parallel classifiers and mapped to severity categories.
+
+A simple confidence proxy is derived from model agreement:
+\begin{equation}
+\text{confidence} = 1 - \min\left(1, \frac{|\hat{y}_{\text{RF}} - \hat{y}_{\text{XGB}}|}{\tau}\right)
+\end{equation}
+where $\tau$ is a scale constant chosen empirically.
+
+\subsection{Explainability Layer}
+The framework supports local explanation techniques to identify key feature contributions for each prediction.
+
+For additive explanation, the model output can be represented as:
+\begin{equation}
+\hat{y} = \phi_0 + \sum_{i=1}^{n} \phi_i
+\end{equation}
+where $\phi_i$ denotes the contribution of feature $i$.
+
+These contributions are surfaced in the interface through ranked bars and contextual interpretation.
+
+\subsection{Forecasting Strategy}
+The forecasting service uses Prophet when sufficient historical structure is available and applies a robust fallback under sparse or unstable conditions.
+
+For horizon $h$ days:
+\begin{equation}
+\{\hat{y}_{t+1}, \hat{y}_{t+2}, \dots, \hat{y}_{t+h}\}
+\end{equation}
+
+Outputs include point forecasts, uncertainty bounds, and qualitative trend labels.
+
+\subsection{Sensitivity Simulation}
+A what-if simulation endpoint enables controlled perturbations of selected pollutants (for example PM2.5, NO$_2$, and CO) and recomputes AQI through the same inference stack.
+
+If baseline feature values are $\mathbf{x}$ and user deltas are $\Delta\mathbf{x}$, simulation uses:
+\begin{equation}
+\mathbf{x}' = \mathbf{x} + \Delta\mathbf{x}
+\end{equation}
+then predicts $\hat{y}'$ and reports:
+\begin{equation}
+\Delta\text{AQI} = \hat{y}' - \hat{y}
+\end{equation}
+
+\section{Implementation Details}
+\subsection{Backend Services}
+Core API modules include:
+\begin{itemize}[leftmargin=*]
+    \item Prediction routes for realtime country estimates.
+    \item History routes for time-series retrieval.
+    \item Forecast routes with cache-aware refresh and invalidation.
+    \item WebSocket route for live update streams.
+    \item Simulation route for intervention analysis.
+\end{itemize}
+
+Caching supports Redis with safe in-memory fallback to preserve availability.
+
+\subsection{Frontend Experience}
+The UI provides a cinematic globe-centric workflow:
+\begin{itemize}[leftmargin=*]
+    \item Country selection on 3D globe.
+    \item Floating glassmorphic mini cards for AQI, pollutants, health, forecast, explainability, and simulation.
+    \item Expanded modal analytics with charts and detailed interpretation.
+    \item Dynamic recoloring of selected country under simulation output.
+\end{itemize}
+
+\subsection{Technology Stack}
+\begin{table}[H]
+\centering
+\caption{Technology Stack}
+\begin{tabular}{ll}
+\toprule
+\textbf{Layer} & \textbf{Technologies} \\
+\midrule
+Frontend & React, Vite, globe.gl, Recharts \\
+Backend & FastAPI, Uvicorn, APScheduler \\
+ML/XAI & scikit-learn, XGBoost, SHAP, LIME (integration context) \\
+Storage/Cache & SQLite, Redis (with fallback) \\
+Deployment & Docker, Docker Compose \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Code Snippets and Output Figures}
+This section provides representative implementation snippets and output illustrations from the developed system. The examples focus on prediction, forecasting, and simulation workflows.
+
+\subsection{Snippet 1: Ensemble AQI Prediction Endpoint}
+\begin{lstlisting}[style=papercode,language=Python,caption={FastAPI endpoint skeleton for AQI prediction}]
+@router.post("/predict")
+def predict(payload: PredictRequest):
+    X = build_feature_vector(payload)
+    Xs = scaler.transform(X)
+
+    rf_pred = float(rf_regressor.predict(Xs)[0])
+    xgb_pred = float(xgb_regressor.predict(Xs)[0])
+    ensemble_pred = 0.5 * (rf_pred + xgb_pred)
+
+    disagreement = abs(rf_pred - xgb_pred)
+    confidence = max(0.0, 1.0 - min(1.0, disagreement / 50.0))
+
+    return {
+        "predicted_aqi": round(ensemble_pred, 2),
+        "rf_prediction": round(rf_pred, 2),
+        "xgb_prediction": round(xgb_pred, 2),
+        "confidence": round(confidence, 3)
+    }
+\end{lstlisting}
+
+\noindent\textbf{Explanation:} The endpoint preprocesses user inputs, generates model-specific predictions, and combines them through simple averaging. Confidence is computed from inter-model agreement, allowing uncertainty-aware output communication.
+
+\begin{figure}[H]
+\centering
+\fbox{%
+\begin{minipage}{0.92\linewidth}
+\vspace{0.4em}
+\textbf{Figure 1. Example JSON Output from Prediction API}
+
+\begin{lstlisting}[style=papercode]
+{
+  "predicted_aqi": 91.37,
+  "rf_prediction": 88.62,
+  "xgb_prediction": 94.12,
+  "confidence": 0.89
+}
+\end{lstlisting}
+\vspace{-0.4em}
+\end{minipage}}
+\caption{Representative API response for a country-level AQI query.}
+\label{fig:pred-output}
+\end{figure}
+
+\noindent\textbf{Figure Interpretation:} The two base models are close in value, resulting in high confidence. A higher disagreement would reduce confidence and flag the prediction as less stable.
+
+\subsection{Snippet 2: Forecast Generation Logic}
+\begin{lstlisting}[style=papercode,language=Python,caption={Simplified 14-day forecasting logic with fallback}]
+def generate_forecast(country_df, horizon=14):
+    if len(country_df) >= 10:
+        prophet_df = country_df[["date", "aqi"]].rename(
+            columns={"date": "ds", "aqi": "y"}
+        )
+        model = Prophet(daily_seasonality=True)
+        model.fit(prophet_df)
+        future = model.make_future_dataframe(periods=horizon)
+        fc = model.predict(future).tail(horizon)
+        return fc[["ds", "yhat", "yhat_lower", "yhat_upper"]]
+
+    base = float(country_df["aqi"].tail(5).mean())
+    return moving_variance_fallback(base_value=base, horizon=horizon)
+\end{lstlisting}
+
+\noindent\textbf{Explanation:} Prophet is used when data sufficiency criteria are met. For sparse histories, the fallback prevents unrealistic flat or unstable curves by injecting controlled variance around recent baseline behavior.
+
+\begin{figure}[H]
+\centering
+\fbox{%
+\begin{minipage}{0.92\linewidth}
+\vspace{0.4em}
+\textbf{Figure 2. Forecast Output Snapshot (14 Days)}
+
+\begin{tabular}{lrrr}
+\toprule
+Date & Point Forecast & Lower Bound & Upper Bound \\
+\midrule
+2026-03-31 & 90.8 & 83.1 & 98.5 \\
+2026-04-01 & 92.4 & 84.6 & 100.9 \\
+2026-04-02 & 93.1 & 85.0 & 101.8 \\
+2026-04-03 & 91.6 & 84.0 & 99.3 \\
+\bottomrule
+\end{tabular}
+\vspace{0.4em}
+\end{minipage}}
+\caption{Illustrative forecast table derived from the API response.}
+\label{fig:forecast-output}
+\end{figure}
+
+\noindent\textbf{Figure Interpretation:} The point forecast indicates short-term AQI persistence with moderate fluctuation, while the bounds express uncertainty. This helps users plan with both expected and worst-case ranges.
+
+\subsection{Snippet 3: Sensitivity Simulation Route}
+\begin{lstlisting}[style=papercode,language=Python,caption={Core simulation workflow for what-if analysis}]
+@router.post("/simulate")
+def simulate(payload: SimulateRequest):
+    baseline = payload.baseline_pollutants
+    deltas = payload.delta_pollutants
+
+    adjusted = {
+        k: max(0.0, baseline.get(k, 0.0) + deltas.get(k, 0.0))
+        for k in baseline.keys()
+    }
+
+    aqi_live = infer_aqi_from_pollutants(baseline)
+    aqi_sim = infer_aqi_from_pollutants(adjusted)
+
+    return {
+        "live_aqi": round(aqi_live, 2),
+        "simulated_aqi": round(aqi_sim, 2),
+        "aqi_delta": round(aqi_sim - aqi_live, 2),
+        "adjusted_pollutants": adjusted
+    }
+\end{lstlisting}
+
+\noindent\textbf{Explanation:} The simulator modifies selected pollutant values, reruns inference, and returns the AQI delta. This enables intervention-oriented reasoning, such as estimating expected AQI improvement under emissions reduction scenarios.
+
+\begin{figure}[H]
+\centering
+\fbox{%
+\begin{minipage}{0.92\linewidth}
+\vspace{0.4em}
+\textbf{Figure 3. Simulation Comparison Example}
+
+\begin{tabular}{lrr}
+\toprule
+Metric & Baseline & Simulated \\
+\midrule
+PM2.5 (\si{\micro\gram\per\meter\cubed}) & 62.0 & 48.0 \\
+NO$_2$ (\si{\micro\gram\per\meter\cubed}) & 41.0 & 33.0 \\
+CO (ppm) & 1.4 & 1.1 \\
+AQI & 108.3 & 91.7 \\
+\bottomrule
+\end{tabular}
+\vspace{0.4em}
+\end{minipage}}
+\caption{Example intervention scenario showing pollutant reductions and AQI response.}
+\label{fig:sim-output}
+\end{figure}
+
+\noindent\textbf{Figure Interpretation:} Reducing key pollutants leads to a lower simulated AQI, quantitatively demonstrating potential benefits of mitigation strategies.
+
+\section{Results and Discussion}
+\subsection{Functional Outcomes}
+The integrated platform achieves:
+\begin{itemize}[leftmargin=*]
+    \item Stable end-to-end AQI prediction and classification flow.
+    \item Improved forecast behavior under sparse data via non-flat fallback logic.
+    \item User-facing explainability artifacts for feature influence interpretation.
+    \item Interactive simulation for intervention-oriented reasoning.
+\end{itemize}
+
+\subsection{Qualitative Evaluation}
+From a usability perspective, the globe-first card architecture reduced cognitive load by presenting context-aware summaries before deep dives. The modular card system also simplified incremental feature integration.
+
+\subsection{Limitations}
+\begin{itemize}[leftmargin=*]
+    \item Dependence on data quality and geographic completeness.
+    \item Forecast reliability decreases for countries with limited temporal history.
+    \item Explainability fidelity depends on underlying model behavior and feature representation.
+\end{itemize}
+
+\section{Future Scope}
+Future enhancements may include:
+\begin{enumerate}[leftmargin=*]
+    \item Spatiotemporal graph models for cross-country influence modeling.
+    \item Satellite and meteorological data fusion at higher temporal resolution.
+    \item Causal inference modules for policy-effect estimation.
+    \item Multi-scenario batch simulation and downloadable impact reports.
+    \item Formal user studies on interpretability and decision quality.
+\end{enumerate}
+
+\section{Conclusion}
+This paper presented a practical and extensible framework for global air quality intelligence by combining ML prediction, explainability, forecasting, and interactive visualization. The system demonstrates how robust backend services and human-centered frontend design can turn raw environmental data into actionable insight. By unifying predictive analytics with what-if simulation and clear health-context communication, the framework provides a foundation for data-driven air quality management and public awareness.
+
+\section*{Acknowledgment}
+The authors acknowledge open-source communities and public environmental data initiatives that made this implementation and evaluation possible.
+
+\begin{thebibliography}{99}
+\bibitem{who2021}
+World Health Organization, "WHO Global Air Quality Guidelines," WHO Press, 2021.
+
+\bibitem{bishop2006}
+C. M. Bishop, \textit{Pattern Recognition and Machine Learning}, Springer, 2006.
+
+\bibitem{breiman2001}
+L. Breiman, "Random Forests," \textit{Machine Learning}, vol. 45, no. 1, pp. 5--32, 2001.
+
+\bibitem{chen2016}
+T. Chen and C. Guestrin, "XGBoost: A Scalable Tree Boosting System," in \textit{Proc. KDD}, 2016.
+
+\bibitem{lundberg2017}
+S. M. Lundberg and S.-I. Lee, "A Unified Approach to Interpreting Model Predictions," in \textit{Proc. NeurIPS}, 2017.
+
+\bibitem{ribeiro2016}
+M. T. Ribeiro, S. Singh, and C. Guestrin, "Why Should I Trust You?: Explaining the Predictions of Any Classifier," in \textit{Proc. KDD}, 2016.
+
+\bibitem{taylor2018}
+S. J. Taylor and B. Letham, "Forecasting at Scale," \textit{The American Statistician}, vol. 72, no. 1, pp. 37--45, 2018.
+
+\bibitem{fastapi}
+S. Ramírez, "FastAPI Framework Documentation," 2026. [Online]. Available: \url{https://fastapi.tiangolo.com/}
+\end{thebibliography}
+
+\end{document}
