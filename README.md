@@ -108,7 +108,7 @@ Explore the platform's core capabilities through these targeted walkthroughs.
 
 | 🛰️ Global UI & Navigation | 📊 Model Explainability (XAI) | 🧪 "What-If" Policy Simulator |
 | :---: | :---: | :---: |
-| [![Global Demo](https://img.shields.io/badge/Watch-Global_UI-blue?style=for-the-badge&logo=playstation5)](assets/screen_recording_1.mp4) | [![XAI Demo](https://img.shields.io/badge/Watch-XAI_Logic-red?style=for-the-badge&logo=target)](assets/screen_recording_2.mp4) | [![Simulator Demo](https://img.shields.io/badge/Watch-Simulator-green?style=for-the-badge&logo=flask)](assets/screen_recording_3.mp4) |
+| [![Global Demo](https://img.shields.io/badge/Watch-Global_UI-blue?style=for-the-badge&logo=playstation5)](assets/screen_recording1.mp4) | [![](https://img.shields.io/badge/Watch-XAI_Logic-red?style=for-the-badge&logo=target)](assets/screen_recording2.mp4) | [![Simulator Demo](https://img.shields.io/badge/Watch-Simulator-green?style=for-the-badge&logo=flask)](assets/screen_recording3.mp4) |
 | *Real-time planetary sync* | *SHAP & LIME attribution* | *Counterfactual analysis* |
 
 > **Pro-Tip:** If you are viewing this on GitHub, you can click the badges above to open the MP4 recordings directly in your browser.
