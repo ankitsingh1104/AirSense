@@ -81,18 +81,36 @@ uvicorn src.api.main:app --reload --port 8000
 cd frontend && npm install && npm run dev
 ---
 ```
-## 🖼️ Interface Gallery
+---
 
-### 🌐 Global Geospatial View
-The main interface features a high-fidelity 3D globe where 171+ countries are mapped with real-time AQI data. The custom shader-based polygons update dynamically based on the ML ensemble's output.
+## 🖼️ Visual Intelligence Gallery
 
-![Global AQI View](C:/Users/ankit/OneDrive/Pictures/Screenshots 1/Screenshot 2026-04-02 172508.png)
+### 🌐 Global Interface
+The planetary view renders 171+ countries with real-time AQI mapping. Each polygon's color is driven by our **RF + XGB Ensemble** inference engine.
 
-### 📊 Deep-Dive Intelligence & XAI
-When a country is selected, the "Cinematic Interaction Model" activates, surrounding the geography with floating glassmorphic cards. This view integrates:
-* **Predictive Analytics:** Comparison of Live vs. ML-predicted AQI.
-* **Explainability (SHAP):** The 'Why This?' card identifies the top pollutant drivers.
-* **What-If Simulator:** Real-time counterfactual analysis sliders.
-* **Health & Forecast:** Actionable guidance and Prophet-based trend lines.
+<p align="center">
+  <img src="assets/screenshot_global.png" width="900" alt="Global AirSense Interface">
+</p>
 
-![Intelligence Dashboard View](path/to/your/image_503bd4.png)
+---
+
+### 🔍 XAI & Country Deep-Dive
+When a country is selected, the **Cinematic Interaction Model** activates. This view integrates **SHAP-based feature attribution** (the "Why This?" card) and the **What-If Simulator**.
+
+<p align="center">
+  <img src="assets/screenshot_country.png" width="900" alt="Country Deep-Dive and XAI">
+</p>
+
+---
+
+### 🎥 Feature Demonstrations
+Explore the platform's core capabilities through these targeted walkthroughs.
+
+| 🛰️ Global UI & Navigation | 📊 Model Explainability (XAI) | 🧪 "What-If" Policy Simulator |
+| :---: | :---: | :---: |
+| [![Global Demo](https://img.shields.io/badge/Watch-Global_UI-blue?style=for-the-badge&logo=playstation5)](assets/screen_recording_1.mp4) | [![XAI Demo](https://img.shields.io/badge/Watch-XAI_Logic-red?style=for-the-badge&logo=target)](assets/screen_recording_2.mp4) | [![Simulator Demo](https://img.shields.io/badge/Watch-Simulator-green?style=for-the-badge&logo=flask)](assets/screen_recording_3.mp4) |
+| *Real-time planetary sync* | *SHAP & LIME attribution* | *Counterfactual analysis* |
+
+> **Pro-Tip:** If you are viewing this on GitHub, you can click the badges above to open the MP4 recordings directly in your browser.
+
+---
